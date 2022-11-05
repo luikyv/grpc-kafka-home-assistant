@@ -11,7 +11,7 @@ from enum import Enum
 
 from .protos import home_pb2_grpc, home_pb2
 from .config import Config
-from .devices import Device, Lamp, AirConditioner
+from .devices import Device, Lamp, AirConditioner, AudioSystem
 
 class SensorTypes(str, Enum):
     luminosity = "luminosity"
@@ -21,6 +21,7 @@ class SensorTypes(str, Enum):
 class DevicesTypes(str, Enum):
     lamp = "lamp"
     air_conditioner = "air_conditioner"
+    audio_system = "audio_system"
 
 @dataclass
 class Sensor:
@@ -70,6 +71,9 @@ class HomeAssistant():
             elif isinstance(device, AirConditioner):
                 stub = home_pb2_grpc.AirConditionerServiceStub(channel)
                 stub.SetAirConditioner(home_pb2.AirConditioner(on=device.on, temperature=device.temperature))
+            elif isinstance(device, AudioSystem):
+                stub = home_pb2_grpc.AudioSystemServiceStub(channel)
+                stub.SetAudioSystem(home_pb2.AudioSystem(on=device.on, current_song=device.current_song))
     
     def get_device(self, device_name: DevicesTypes) -> Device:
         with grpc.insecure_channel(f"localhost:{Config.DEVICE_SERVER_PORT}") as channel:
@@ -81,6 +85,10 @@ class HomeAssistant():
                 stub = home_pb2_grpc.AirConditionerServiceStub(channel)
                 air_conditioner = stub.GetAirConditioner(home_pb2.Empty())
                 return AirConditioner(on=air_conditioner.on, temperature=air_conditioner.temperature)
+            if device_name == "audio_system":
+                stub = home_pb2_grpc.AudioSystemServiceStub(channel)
+                audio_system = stub.GetAudioSystem(home_pb2.Empty())
+                return AudioSystem(on=audio_system.on, current_song=audio_system.current_song)
 
 #################### API Endpoints ####################
 home_assistant = HomeAssistant(
@@ -94,6 +102,10 @@ home_assistant = HomeAssistant(
             name="temperature",
             topic=Config.TEMPERATURE_TOPIC
         ),
+        Sensor(
+            name="audio_intensity",
+            topic=Config.AUDIO_INTENSITY_TOPIC
+        ),
     ]
 )
 app = FastAPI()
@@ -101,8 +113,12 @@ app = FastAPI()
 ########## Sensors ##########
 
 @app.get("/sensor/{sensor_name}")
-async def get_luminosity(sensor_name: SensorTypes):
+async def get_sensor(sensor_name: SensorTypes):
     return {"property": home_assistant.get_last_read(sensor_name)}
+
+@app.get("/sensors")
+async def get_sensors():
+    return {"sensors": list(home_assistant.sensor_mapping.keys())}
 
 ########## Devices ##########
 
@@ -122,6 +138,19 @@ async def set_air_conditioner(on: bool, temperature: float):
 async def get_air_conditioner():
     air_conditioner = home_assistant.get_device(device_name="air_conditioner")
     return {"on": air_conditioner.on, "temperature": air_conditioner.temperature}
+
+@app.put("/audio_system/{on}/{current_song}")
+async def set_audio_system(on: bool, current_song: str):
+    home_assistant.set_device(AudioSystem(on=on, current_song=current_song))
+
+@app.get("/audio_system")
+async def get_audio_system():
+    audio_system = home_assistant.get_device(device_name="audio_system")
+    return {"on": audio_system.on, "current_song": audio_system.current_song}
+
+@app.get("/devices")
+async def get_devices():
+    return {"devices": [device.name for device in DevicesTypes]}
 
 #################### Main ####################
 

@@ -191,3 +191,97 @@ class AirConditionerService(object):
             home__pb2.AirConditioner.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
+class AudioSystemServiceStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.SetAudioSystem = channel.unary_unary(
+                '/AudioSystemService/SetAudioSystem',
+                request_serializer=home__pb2.AudioSystem.SerializeToString,
+                response_deserializer=home__pb2.Status.FromString,
+                )
+        self.GetAudioSystem = channel.unary_unary(
+                '/AudioSystemService/GetAudioSystem',
+                request_serializer=home__pb2.Empty.SerializeToString,
+                response_deserializer=home__pb2.AudioSystem.FromString,
+                )
+
+
+class AudioSystemServiceServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def SetAudioSystem(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAudioSystem(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_AudioSystemServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'SetAudioSystem': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetAudioSystem,
+                    request_deserializer=home__pb2.AudioSystem.FromString,
+                    response_serializer=home__pb2.Status.SerializeToString,
+            ),
+            'GetAudioSystem': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAudioSystem,
+                    request_deserializer=home__pb2.Empty.FromString,
+                    response_serializer=home__pb2.AudioSystem.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'AudioSystemService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class AudioSystemService(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def SetAudioSystem(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/AudioSystemService/SetAudioSystem',
+            home__pb2.AudioSystem.SerializeToString,
+            home__pb2.Status.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetAudioSystem(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/AudioSystemService/GetAudioSystem',
+            home__pb2.Empty.SerializeToString,
+            home__pb2.AudioSystem.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

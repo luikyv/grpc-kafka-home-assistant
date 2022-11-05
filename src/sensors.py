@@ -47,8 +47,12 @@ class LuminositySensor(Sensor):
         with grpc.insecure_channel(f"localhost:{Config.DEVICE_SERVER_PORT}") as channel:
             stub = home_pb2_grpc.LampServiceStub(channel)
             empty = home_pb2.Empty()
-            lamp = stub.GetLamp(empty)
-            return lamp.on
+            try:
+                lamp = stub.GetLamp(empty)
+            except:
+                return False
+            else:
+                return lamp.on
 
 class TemperatureSensor(Sensor):
 
@@ -64,8 +68,33 @@ class TemperatureSensor(Sensor):
         with grpc.insecure_channel(f"localhost:{Config.DEVICE_SERVER_PORT}") as channel:
             stub = home_pb2_grpc.AirConditionerServiceStub(channel)
             empty = home_pb2.Empty()
-            air_conditioner = stub.GetAirConditioner(empty)
-            return air_conditioner.temperature
+            try:
+                air_conditioner = stub.GetAirConditioner(empty)
+            except:
+                return 25.0
+            else:
+                return air_conditioner.temperature
+
+class AudioIntensitySensor(Sensor):
+
+    async def publish_properties(self, producer: AIOKafkaProducer) -> None:
+        audio_intensity = random.uniform(0.85, 1.0) if self.is_audio_system_on() else random.uniform(0.0, 0.15)
+        print(f"Publishing audio intensity: {audio_intensity:.2f} decibels")
+        await producer.send_and_wait(
+            self.topic,
+            json.dumps({"property": audio_intensity}).encode("utf-8")
+        )
+
+    def is_audio_system_on(self,) -> bool:
+        with grpc.insecure_channel(f"localhost:{Config.DEVICE_SERVER_PORT}") as channel:
+            stub = home_pb2_grpc.AudioSystemServiceStub(channel)
+            empty = home_pb2.Empty()
+            try:
+                audio_system = stub.GetAudioSystem(empty)
+            except:
+                return False
+            else:
+                return audio_system.on
 
 #################### Sensor Main Functions ##########
 
@@ -78,10 +107,34 @@ async def _sensors_main():
         kafka_port=Config.KAFKA_PORT,
         topic=Config.TEMPERATURE_TOPIC
     )
+    audio_system_sensor = AudioIntensitySensor(
+        kafka_port=Config.KAFKA_PORT,
+        topic=Config.AUDIO_INTENSITY_TOPIC
+    )
     await asyncio.gather(
-        *[sensor.observe() for sensor in [luminosity_sensor, temperature_sensor]]
+        *[sensor.observe() for sensor in [luminosity_sensor, temperature_sensor, audio_system_sensor]]
     )
 
-def sensors_main():
-    asyncio.run(_sensors_main())
+# def sensors_main():
+#     asyncio.run(_sensors_main())
+
+def sensors_main(sensor_option: int):
+    if sensor_option == 1:
+        luminosity_sensor = LuminositySensor(
+            kafka_port=Config.KAFKA_PORT,
+            topic=Config.LUMINOSITY_TOPIC
+        )
+        asyncio.run(luminosity_sensor.observe())
+    elif sensor_option == 2:
+        temperature_sensor = TemperatureSensor(
+            kafka_port=Config.KAFKA_PORT,
+            topic=Config.TEMPERATURE_TOPIC
+        )
+        asyncio.run(temperature_sensor.observe())
+    elif sensor_option == 3:
+        audio_system_sensor = AudioIntensitySensor(
+            kafka_port=Config.KAFKA_PORT,
+            topic=Config.AUDIO_INTENSITY_TOPIC
+        )
+        asyncio.run(audio_system_sensor.observe())
     

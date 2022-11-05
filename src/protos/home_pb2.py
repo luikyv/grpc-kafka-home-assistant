@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nhome.proto\"\x12\n\x04Lamp\x12\n\n\x02on\x18\x01 \x02(\x08\"1\n\x0e\x41irConditioner\x12\n\n\x02on\x18\x01 \x02(\x08\x12\x13\n\x0btemperature\x18\x02 \x02(\x02\"\x18\n\x06Status\x12\x0e\n\x06status\x18\x01 \x02(\x05\"\x07\n\x05\x45mpty2F\n\x0bLampService\x12\x1b\n\x07SetLamp\x12\x05.Lamp\x1a\x07.Status\"\x00\x12\x1a\n\x07GetLamp\x12\x06.Empty\x1a\x05.Lamp\"\x00\x32x\n\x15\x41irConditionerService\x12/\n\x11SetAirConditioner\x12\x0f.AirConditioner\x1a\x07.Status\"\x00\x12.\n\x11GetAirConditioner\x12\x06.Empty\x1a\x0f.AirConditioner\"\x00')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nhome.proto\"\x12\n\x04Lamp\x12\n\n\x02on\x18\x01 \x02(\x08\"1\n\x0e\x41irConditioner\x12\n\n\x02on\x18\x01 \x02(\x08\x12\x13\n\x0btemperature\x18\x02 \x02(\x02\"/\n\x0b\x41udioSystem\x12\n\n\x02on\x18\x01 \x02(\x08\x12\x14\n\x0c\x63urrent_song\x18\x02 \x02(\t\"\x18\n\x06Status\x12\x0e\n\x06status\x18\x01 \x02(\x05\"\x07\n\x05\x45mpty2F\n\x0bLampService\x12\x1b\n\x07SetLamp\x12\x05.Lamp\x1a\x07.Status\"\x00\x12\x1a\n\x07GetLamp\x12\x06.Empty\x1a\x05.Lamp\"\x00\x32x\n\x15\x41irConditionerService\x12/\n\x11SetAirConditioner\x12\x0f.AirConditioner\x1a\x07.Status\"\x00\x12.\n\x11GetAirConditioner\x12\x06.Empty\x1a\x0f.AirConditioner\"\x00\x32i\n\x12\x41udioSystemService\x12)\n\x0eSetAudioSystem\x12\x0c.AudioSystem\x1a\x07.Status\"\x00\x12(\n\x0eGetAudioSystem\x12\x06.Empty\x1a\x0c.AudioSystem\"\x00')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'home_pb2', globals())
@@ -24,12 +24,16 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _LAMP._serialized_end=32
   _AIRCONDITIONER._serialized_start=34
   _AIRCONDITIONER._serialized_end=83
-  _STATUS._serialized_start=85
-  _STATUS._serialized_end=109
-  _EMPTY._serialized_start=111
-  _EMPTY._serialized_end=118
-  _LAMPSERVICE._serialized_start=120
-  _LAMPSERVICE._serialized_end=190
-  _AIRCONDITIONERSERVICE._serialized_start=192
-  _AIRCONDITIONERSERVICE._serialized_end=312
+  _AUDIOSYSTEM._serialized_start=85
+  _AUDIOSYSTEM._serialized_end=132
+  _STATUS._serialized_start=134
+  _STATUS._serialized_end=158
+  _EMPTY._serialized_start=160
+  _EMPTY._serialized_end=167
+  _LAMPSERVICE._serialized_start=169
+  _LAMPSERVICE._serialized_end=239
+  _AIRCONDITIONERSERVICE._serialized_start=241
+  _AIRCONDITIONERSERVICE._serialized_end=361
+  _AUDIOSYSTEMSERVICE._serialized_start=363
+  _AUDIOSYSTEMSERVICE._serialized_end=468
 # @@protoc_insertion_point(module_scope)

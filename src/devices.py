@@ -12,3 +12,8 @@ class Lamp(Device):
 class AirConditioner(Device):
     on: bool = False
     temperature: float = 25.0
+
+@dataclass
+class AudioSystem(Device):
+    on: bool = False
+    current_song: str = "none"

@@ -8,6 +8,11 @@ service AirConditionerService {
     rpc GetAirConditioner(Empty) returns (AirConditioner) {}
 }
 
+service AudioSystemService {
+    rpc SetAudioSystem(AudioSystem) returns (Status) {}
+    rpc GetAudioSystem(Empty) returns (AudioSystem) {}
+}
+
 message Lamp {
     required bool on = 1;
 }
@@ -15,6 +20,11 @@ message Lamp {
 message AirConditioner {
     required bool on = 1;
     required float temperature = 2;
+}
+
+message AudioSystem {
+    required bool on = 1;
+    required string current_song = 2;
 }
 
 message Status {
