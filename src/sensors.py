@@ -44,7 +44,7 @@ class LuminositySensor(Sensor):
         )
 
     def is_the_lamp_on(self,) -> bool:
-        with grpc.insecure_channel(f"localhost:{Config.DEVICE_SERVER_PORT}") as channel:
+        with grpc.insecure_channel(f"localhost:{Config.LAMP_SERVER_PORT}") as channel:
             stub = home_pb2_grpc.LampServiceStub(channel)
             empty = home_pb2.Empty()
             try:
@@ -65,7 +65,7 @@ class TemperatureSensor(Sensor):
         )
 
     def get_temperature(self,) -> float:
-        with grpc.insecure_channel(f"localhost:{Config.DEVICE_SERVER_PORT}") as channel:
+        with grpc.insecure_channel(f"localhost:{Config.AIR_CONDITIONER_SERVER_PORT}") as channel:
             stub = home_pb2_grpc.AirConditionerServiceStub(channel)
             empty = home_pb2.Empty()
             try:
@@ -86,7 +86,7 @@ class AudioIntensitySensor(Sensor):
         )
 
     def is_audio_system_on(self,) -> bool:
-        with grpc.insecure_channel(f"localhost:{Config.DEVICE_SERVER_PORT}") as channel:
+        with grpc.insecure_channel(f"localhost:{Config.AUDIO_SYSTEM_SERVER_PORT}") as channel:
             stub = home_pb2_grpc.AudioSystemServiceStub(channel)
             empty = home_pb2.Empty()
             try:

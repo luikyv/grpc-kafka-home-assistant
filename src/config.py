@@ -1,6 +1,9 @@
 class Config:
     KAFKA_PORT: int = 9092
-    DEVICE_SERVER_PORT: int = 50051
+    LAMP_SERVER_PORT: int = 50051
+    AIR_CONDITIONER_SERVER_PORT: int = 50052
+    AUDIO_SYSTEM_SERVER_PORT: int = 50053
+
     HOME_ASSISTANT_PORT: int = 8000
 
     LUMINOSITY_TOPIC: str = "luminosity"

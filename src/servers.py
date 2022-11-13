@@ -69,12 +69,14 @@ def servers_main(server_option: int):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     if server_option == 1:
         home_pb2_grpc.add_LampServiceServicer_to_server(LampServer(lamp=lamp), server)
+        server.add_insecure_port(f"[::]:{Config.LAMP_SERVER_PORT}")
     if server_option == 2:
         home_pb2_grpc.add_AirConditionerServiceServicer_to_server(AirConditionerServer(air_conditioner=air_conditioner), server)
+        server.add_insecure_port(f"[::]:{Config.AIR_CONDITIONER_SERVER_PORT}")
     if server_option == 3:
         home_pb2_grpc.add_AudioSystemServiceServicer_to_server(AudioSystemServer(audio_system=audio_system), server)
-    
-    server.add_insecure_port(f"[::]:{Config.DEVICE_SERVER_PORT}")
+        server.add_insecure_port(f"[::]:{Config.AUDIO_SYSTEM_SERVER_PORT}")
+        
     server.start()
     server.wait_for_termination()
 

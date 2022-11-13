@@ -64,30 +64,35 @@ class HomeAssistant():
     ########## Devices ##########
 
     def set_device(self, device: Device) -> None:
-        with grpc.insecure_channel(f"localhost:{Config.DEVICE_SERVER_PORT}") as channel:
-            if isinstance(device, Lamp):
+        if isinstance(device, Lamp):
+            with grpc.insecure_channel(f"localhost:{Config.LAMP_SERVER_PORT}") as channel:
                 stub = home_pb2_grpc.LampServiceStub(channel)
                 stub.SetLamp(home_pb2.Lamp(on=device.on))
-            elif isinstance(device, AirConditioner):
+        elif isinstance(device, AirConditioner):
+            with grpc.insecure_channel(f"localhost:{Config.AIR_CONDITIONER_SERVER_PORT}") as channel:
                 stub = home_pb2_grpc.AirConditionerServiceStub(channel)
                 stub.SetAirConditioner(home_pb2.AirConditioner(on=device.on, temperature=device.temperature))
-            elif isinstance(device, AudioSystem):
+        elif isinstance(device, AudioSystem):
+            with grpc.insecure_channel(f"localhost:{Config.AUDIO_SYSTEM_SERVER_PORT}") as channel:
                 stub = home_pb2_grpc.AudioSystemServiceStub(channel)
                 stub.SetAudioSystem(home_pb2.AudioSystem(on=device.on, current_song=device.current_song))
     
     def get_device(self, device_name: DevicesTypes) -> Device:
-        with grpc.insecure_channel(f"localhost:{Config.DEVICE_SERVER_PORT}") as channel:
-            if device_name == "lamp":
+        empty = home_pb2.Empty()
+        if device_name == "lamp":
+            with grpc.insecure_channel(f"localhost:{Config.LAMP_SERVER_PORT}") as channel:
                 stub = home_pb2_grpc.LampServiceStub(channel)
-                lamp = stub.GetLamp(home_pb2.Empty())
+                lamp = stub.GetLamp(empty)
                 return Lamp(on=lamp.on)
-            if device_name == "air_conditioner":
+        elif device_name == "air_conditioner":
+            with grpc.insecure_channel(f"localhost:{Config.AIR_CONDITIONER_SERVER_PORT}") as channel:
                 stub = home_pb2_grpc.AirConditionerServiceStub(channel)
-                air_conditioner = stub.GetAirConditioner(home_pb2.Empty())
+                air_conditioner = stub.GetAirConditioner(empty)
                 return AirConditioner(on=air_conditioner.on, temperature=air_conditioner.temperature)
-            if device_name == "audio_system":
+        elif device_name == "audio_system":
+            with grpc.insecure_channel(f"localhost:{Config.AUDIO_SYSTEM_SERVER_PORT}") as channel:
                 stub = home_pb2_grpc.AudioSystemServiceStub(channel)
-                audio_system = stub.GetAudioSystem(home_pb2.Empty())
+                audio_system = stub.GetAudioSystem(empty)
                 return AudioSystem(on=audio_system.on, current_song=audio_system.current_song)
 
 #################### API Endpoints ####################
@@ -128,7 +133,10 @@ async def set_lamp(on: bool):
 
 @app.get("/lamp")
 async def get_lamp():
-    return {"on": home_assistant.get_device(device_name="lamp").on}
+    print("TO AQUI")
+    lamp = home_assistant.get_device(device_name="lamp")
+    print("TO AQUI")
+    return {"on": lamp.on}
 
 @app.put("/air_conditioner/{on}/{temperature}")
 async def set_air_conditioner(on: bool, temperature: float):
